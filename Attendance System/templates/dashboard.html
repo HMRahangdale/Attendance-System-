@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Attendance System</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar glass-card">
+            <div class="sidebar-brand">Attendance System</div>
+            <nav>
+                <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/students">Students</a>
+                <a href="/attendance">Attendance</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Overview of student attendance today.</p>
+                </div>
+            </header>
+
+            <section class="cards-grid">
+                <div class="stat-card glass-card">
+                    <h3>Total Students</h3>
+                    <p>{{ total_students }}</p>
+                </div>
+                <div class="stat-card glass-card">
+                    <h3>Present Today</h3>
+                    <p>{{ present_today }}</p>
+                </div>
+                <div class="stat-card glass-card">
+                    <h3>Absent Today</h3>
+                    <p>{{ absent_today }}</p>
+                </div>
+                <div class="stat-card glass-card">
+                    <h3>Avg Attendance</h3>
+                    <p>{{ average_attendance }}%</p>
+                </div>
+            </section>
+
+            <section class="stats-panel glass-card">
+                <div class="stats-header">
+                    <div>
+                        <h2>Attendance Summary</h2>
+                        <p>Daily performance for the selected date: {{ today }}</p>
+                    </div>
+                </div>
+                <div class="chart-row">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        const attendanceData = {
+            labels: ['Present', 'Absent'],
+            datasets: [{
+                data: [{{ present_today }}, {{ absent_today }}],
+                backgroundColor: ['#5CE1E6', '#FF6B6B'],
+                borderWidth: 0
+            }]
+        };
+        const config = {
+            type: 'doughnut',
+            data: attendanceData,
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#d0d6e2'
+                        }
+                    }
+                }
+            }
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('attendanceChart');
+            if (ctx) new Chart(ctx, config);
+        });
+    </script>
+    <script src="/static/script.js"></script>
+</body>
+</html>

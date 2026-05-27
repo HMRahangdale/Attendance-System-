@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance - Attendance System</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar glass-card">
+            <div class="sidebar-brand">Attendance System</div>
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/students">Students</a>
+                <a href="/attendance" class="active">Attendance</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1>Attendance Tracking</h1>
+                    <p>Mark and view daily attendance history.</p>
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="toast-container">
+                        {% for category, message in messages %}
+                            <div class="toast toast-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <section class="attendance-panel glass-card">
+                <form method="POST" class="attendance-form">
+                    <div class="attendance-controls">
+                        <label for="attendance_date">Select Date</label>
+                        <input id="attendance_date" name="attendance_date" type="date" value="{{ selected_date }}" required />
+                        <button type="submit" class="btn btn-primary">Save Attendance</button>
+                    </div>
+                    <div class="attendance-summary">
+                        <div class="summary-card">
+                            <p>Present</p>
+                            <span>{{ present_count }}</span>
+                        </div>
+                        <div class="summary-card">
+                            <p>Absent</p>
+                            <span>{{ absent_count }}</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Course</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in attendance_records %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ row.student.full_name }}</td>
+                                        <td>{{ row.student.email }}</td>
+                                        <td>{{ row.student.course }}</td>
+                                        <td>
+                                            <input type="hidden" name="student_id" value="{{ row.student.id }}" />
+                                            <select name="status" class="status-dropdown">
+                                                <option value="Present" {% if row.status == 'Present' %}selected{% endif %}>Present</option>
+                                                <option value="Absent" {% if row.status == 'Absent' %}selected{% endif %}>Absent</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5">No student records available.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
